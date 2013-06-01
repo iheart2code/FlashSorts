@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:WindowedApplication xmlns:fx="http://ns.adobe.com/mxml/2009" 
+					   xmlns:s="library://ns.adobe.com/flex/spark" 
+					   xmlns:mx="library://ns.adobe.com/flex/mx"
+					   initialize="resetArray()">
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+	<fx:Script source="QuickSort.as" />
+	<fx:Script source="MergeSort.as" />
+	<fx:Script source="HeapSort.as" />
+	<fx:Script source="BubbleSort.as" />
+	<fx:Script source="InsertionSort.as" />
+	<fx:Script source="SelectSort.as" />
+	<fx:Script>
+		<![CDATA[
+			import flash.utils.getTimer;
+			[Bindable]
+			public var valueArray:Array;
+			
+			public const NUMBER_OF_COLUMNS:Number = 400;
+			
+			public function resetArray():void
+			{
+				valueArray = new Array();
+				
+				for (var i:uint = 0; i < NUMBER_OF_COLUMNS; i++)
+					valueArray.push(i);
+				
+				for (var j:uint = 0; j < NUMBER_OF_COLUMNS; j++)
+				{
+					var indexToSwap:uint = Math.floor(Math.random() * NUMBER_OF_COLUMNS);
+					var temp:uint = valueArray[j];
+					valueArray[j] = valueArray[indexToSwap];
+					valueArray[indexToSwap] = temp;
+				}
+				
+				drawGraphView();
+			}
+			
+			public function drawGraphView():void
+			{
+				graphView.graphics.clear();
+				graphView.graphics.lineStyle(1, 0xFF0000);
+				
+				for (var i:uint = 0; i < NUMBER_OF_COLUMNS; i++)
+				{
+					graphView.graphics.moveTo(i, NUMBER_OF_COLUMNS);
+					graphView.graphics.lineTo(i, NUMBER_OF_COLUMNS - valueArray[i]);
+				}
+			}
+			
+			public function doSort(evt:MouseEvent):void
+			{
+				resetArray();
+				
+				var startTime:Number = getTimer();
+				
+				var sortType:String = (evt.target as Button).label;
+				
+				switch (sortType.toLowerCase())
+				{
+					case "quick":
+						valueArray = quick_sort(valueArray);
+						break;
+					case "merge":
+						valueArray = merge_sort(valueArray);
+						break;
+					case "heap":
+						valueArray = heap_sort(valueArray);
+						break;
+					case "bubble":
+						valueArray = bubble_sort(valueArray);
+						break;
+					case "insertion":
+						valueArray = insertion_sort(valueArray);
+						break;
+					case "select":
+						valueArray = select_sort(valueArray);
+						break;
+				}
+				
+				var endTime:Number = getTimer();
+				
+				drawGraphView();
+				
+				trace('Completed', sortType, 'sort with a runtime of:', endTime - startTime);
+			}
+			
+		]]>
+	</fx:Script>
+	
+	<mx:UIComponent id="graphView" />
+	
+	<s:HGroup bottom="0">
+		<s:Button label="Reset graph" click="resetArray()" />
+		<s:Button label="Quick" click="doSort(event)" />
+		<s:Button label="Merge" click="doSort(event)" />
+		<s:Button label="Heap" click="doSort(event)" />
+		<s:Button label="Bubble" click="doSort(event)" />
+		<s:Button label="Insertion" click="doSort(event)" />
+		<s:Button label="Select" click="doSort(event)" />
+	</s:HGroup>
+</s:WindowedApplication>
